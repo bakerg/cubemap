@@ -43,36 +43,36 @@ for i in range(0,6):
         axA = it.multi_index[0]
         axB = it.multi_index[1]
         #Color is an axis, so we visit each point 3 times for R,G,B actually...
-   
-        #Here for each face we decide what each axis represents, x, y or z. 
+
+        #Here for each face we decide what each axis represents, x, y or z.
         z = -axA + HSIZE
-        
+
         if i == 0:
             x = HSIZE
             y = -axB + HSIZE
         elif i == 1:
             x = -HSIZE
             y = axB - HSIZE
-        elif i == 2:
+        elif i == 4:
             x = axB - HSIZE
             y = HSIZE
-        elif i == 3:
+        elif i == 5:
             x = -axB + HSIZE
             y = -HSIZE
-        elif i == 4:
+        elif i == 2:
             z = HSIZE
             x = axB - HSIZE
             y = axA - HSIZE
-        elif i == 5:
+        elif i == 3:
             z = -HSIZE
             x = axB - HSIZE
             y = -axA + HSIZE
-    
+
         #Now that we have x,y,z for point on plane, convert to spherical
         r = math.sqrt(float(x*x + y*y + z*z))
         theta = math.acos(float(z)/r)
         phi = -math.atan2(float(y),x)
-        
+
         #Now that we have spherical, decide which pixel from the input image we want.
         ix = int((im.shape[1]-1)*phi/(2*math.pi))
         iy = int((im.shape[0]-1)*(theta)/math.pi)
@@ -91,14 +91,14 @@ for i in range(0,6):
         pimg.save(os.path.join(args.dir, "%s%d.%s"%(args.prefix,i,args.type)), quality=args.quality)
     else:
         misc.imsave(os.path.join(args.dir, "%s%d.%s"%(args.prefix,i,args.type)), color_side)
-    
+
     #Children Exit here
     sys.exit(0)
 
 
 # Thise seems to work better than waitpid(-1, 0), in that case sometimes the
 # files still don't exist and we get an error.
-for pid in pids: 
+for pid in pids:
     os.waitpid(pid, 0)
 
 #This is handy if we want just one image our program will parse instead of 6.
@@ -107,6 +107,6 @@ if args.onefile:
     for i in range(0,6):
         ifiles.append(misc.imread(os.path.join(args.dir, "%s%d.%s"%(args.prefix,i,args.type))))
     onefile = np.concatenate(ifiles, axis=1)
-    misc.imsave(args.onefile, onefile)    
+    misc.imsave(args.onefile, onefile)
     for i in range(0,6):
         os.unlink(os.path.join(args.dir, "%s%d.%s"%(args.prefix,i,args.type)))
